@@ -1,0 +1,45 @@
+# hermes-bridge user configuration.
+#
+# Edit this file to change what the bridge binds to and what it can read.
+# setup.sh installs the live copy at ~/.hermes/bridge/peer_config.toml.
+# The bridge re-reads allowlist.yaml on every request; this file is
+# read once at startup, so restart the bridge after editing.
+
+[server]
+# Tailscale IP to bind to. Set to your tailnet IP, or "0.0.0.0" if you
+# know what you're doing (NOT recommended — exposes to the public internet).
+bind_host = "100.x.x.x"   # replace with your Tailscale IP
+port = 7777
+
+[approval]
+# Channel for risky-action approval requests. One of: telegram, discord, matrix.
+channel = "telegram"
+
+# Where the approval queue and audit trail live.
+pending_dir = "~/.hermes/bridge/approvals/pending"
+audit_dir = "~/.hermes/bridge/approvals/audit"
+
+# How long an approval is valid before it auto-expires (seconds).
+ttl_seconds = 1800
+
+[vault]
+# Roots the vault_read tool is allowed to resolve. Paths outside these
+# are rejected with a clear error. .. escapes blocked at runtime.
+allowed_roots = [
+    "~/.hermes/memory",
+    "~/.hermes/skills",
+    "~/.hermes/cron",
+    "~/.hermes/bridge",
+    "~/nvme-data/Documents/Obsidian",
+]
+
+[inbox]
+# The shared coordination note between this Hermes and any cloud
+# assistants that dial the bridge.
+path = "~/.hermes/bridge/shared_inbox/inbox.md"
+
+[logging]
+level = "info"
+# Set to a file path to redirect logs (e.g. "/var/log/hermes-bridge.log").
+# Leave empty to use journalctl when run under systemd.
+file = ""

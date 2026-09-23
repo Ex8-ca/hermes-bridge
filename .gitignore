@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Local config (don't accidentally push your real config)
+peer_config.local.toml
+.env
+.env.local
+*.log
+
+# Build / dist
+build/
+dist/

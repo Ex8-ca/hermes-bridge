@@ -1,0 +1,26 @@
+# Hermes bridge — default-allow tool surface.
+#
+# Tools listed here run without the Telegram approval gate.
+# Everything else (writes, sends, HA control) goes to the approval queue
+# and waits for a yes/no reply on the Home Telegram thread.
+#
+# Tweak this file to widen/narrow what the cloud side can do unattended.
+# The bridge re-reads it on every request, no restart needed.
+
+default_allow:
+  - vault_read         # read_file under allowed roots only
+  - session_search     # search past Hermes conversations
+  - inbox_read         # read shared coordination inbox
+  - agent_ask          # route a prompt through the Hermes agent loop; side-effects still gated
+
+# Paths the vault_read tool is allowed to resolve. Block .. escapes;
+# anything outside these roots is rejected with a clear error.
+allowed_vault_roots:
+  - ~/.hermes/memory
+  - ~/.hermes/skills
+  - ~/.hermes/cron
+  - ~/.hermes/bridge      # the bridge can read its own config
+  - ~/nvme-data/Documents/Obsidian
+
+# Anything else (vault_write, send_message, ha_call_service, etc.)
+# falls through to the approval gate.

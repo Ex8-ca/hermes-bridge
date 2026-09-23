@@ -1,0 +1,35 @@
+[Unit]
+Description=Hermes bridge — tailnet-only MCP gateway for cloud assistant
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# All paths are env-driven so the unit file is portable across machines.
+# %h expands to the user's home directory at runtime.
+# HERMES_BRIDGE_HOME       — install dir (default ~/.hermes/bridge)
+# HERMES_HOME              — Hermes root (default $HERMES_BRIDGE_HOME/..)
+# HERMES_BRIDGE_BIND_HOST  — tailnet IP to bind (default: auto-detect via Tailscale)
+# HERMES_BRIDGE_PORT       — port to listen on (default 7777)
+Environment=HERMES_BRIDGE_HOME=%h/.hermes/bridge
+Environment=HERMES_HOME=%h/.hermes
+Environment=HERMES_BIN=%h/.hermes/hermes-agent/venv/bin/hermes
+ExecStart=%h/.hermes/hermes-agent/venv/bin/python %h/.hermes/bridge/hermes_bridge.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hermes-bridge
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.hermes/bridge
+
+# Hardening: tailnet-only bind, no privilege escalation, no writes outside bridge dir.
+PrivateTmp=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK AF_UNIX
+
+[Install]
+WantedBy=default.target
